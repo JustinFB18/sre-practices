@@ -22,7 +22,7 @@ pipeline {
                 // Ejecuta el script de monitoreo
                 script {
                     sh '''
-                        python3 ../monitoring/website_monitor.py
+                        python3 monitoring/website_monitor.py
                     '''
                 }
             }

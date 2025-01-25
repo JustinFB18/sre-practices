@@ -11,7 +11,7 @@ on:
 
 jobs:
   run_monitoring_script:
-    runs-on: ubuntu-latest  # Define que el runner es Ubuntu
+    runs-on: ubuntu-latest 
 
     env:
       EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}

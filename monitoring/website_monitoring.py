@@ -8,7 +8,6 @@ from email.mime.text import MIMEText
 
 # Configurations
 URL = os.getenv("WEBSITE_MONITORING")  # Website to monitor
-CHECK_INTERVAL = 60  # Time between checks (in seconds)
 ALERT_THRESHOLD = 500  # Response time threshold in ms
 SMTP_SERVER = "smtp.gmail.com"  # SMTP server for email alerts
 SMTP_PORT = 587
@@ -66,9 +65,7 @@ def check_website():
 def main():
     """Main function to run the monitor."""
     logging.info("Starting website monitor...")
-    while True:
-        check_website()
-        time.sleep(CHECK_INTERVAL)
+    check_website()
 
 if __name__ == "__main__":
     main()

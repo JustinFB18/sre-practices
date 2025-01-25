@@ -3,7 +3,9 @@ name: Website Monitoring Pipeline
 on:
   push:
     branches:
-      - '*'  # Ejecutar cuando haya un push en cualquier rama
+      - 'hotfix/*'   # Coincide con ramas que comienzan con hotfix/
+      - 'feature/*'  # Coincide con ramas que comienzan con feature/
+      - '*'          # Coincide con todas las ramas
   pull_request:
     branches:
       - 'main'  # Ejecutar cuando haya un PR hacia main
@@ -11,13 +13,10 @@ on:
 
 jobs:
   run_monitoring_script:
-    runs-on: ubuntu-latest  # Define que el runner es Ubuntu
+    runs-on: ubuntu-latest 
 
     env:
-      WEBSITE_MONITORING: ${{ env.WEBSITE_MONITORING }}
-      EMAIL_SENDER: ${{ env.EMAIL_SENDER }}
       EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-      EMAIL_RECEIVER_GROUP: ${{ env.EMAIL_RECEIVER_GROUP }}
 
     steps:
     - name: Checkout Code
@@ -37,10 +36,10 @@ jobs:
     - name: Run Website Monitoring Script
       run: |
         source venv/bin/activate
-        python monitoring/website_monitor.py  # Ejecuta el script de monitoreo
+        python monitoring/website_monitoring.py  # Ejecuta el script de monitoreo
 
     - name: Archive Logs
-      uses: actions/upload-artifact@v2  # Sube los logs como artefactos
+      uses: actions/upload-artifact@v3  # Sube los logs como artefactos
       with:
         name: website-monitor-logs
         path: website_monitor.log

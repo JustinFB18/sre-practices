@@ -1,0 +1,51 @@
+name: Website Monitoring Pipeline
+
+on:
+  push:
+    branches:
+      - '*'  # Ejecutar cuando haya un push en cualquier rama
+  pull_request:
+    branches:
+      - 'main'  # Ejecutar cuando haya un PR hacia main
+
+
+jobs:
+  run_monitoring_script:
+    runs-on: ubuntu-latest  # Define que el runner es Ubuntu
+
+    env:
+      WEBSITE_MONITORING: ${{ env.WEBSITE_MONITORING }}
+      EMAIL_SENDER: ${{ env.EMAIL_SENDER }}
+      EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+      EMAIL_RECEIVER_GROUP: ${{ env.EMAIL_RECEIVER_GROUP }}
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2  # Configura Python en el runner
+      with:
+        python-version: '3.8'  # Especifica la versión de Python a usar
+
+    - name: Install dependencies
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install requests
+
+    - name: Run Website Monitoring Script
+      run: |
+        source venv/bin/activate
+        python monitoring/website_monitor.py  # Ejecuta el script de monitoreo
+
+    - name: Archive Logs
+      uses: actions/upload-artifact@v2  # Sube los logs como artefactos
+      with:
+        name: website-monitor-logs
+        path: website_monitor.log
+
+    - name: Send notification email on failure
+      if: failure()  # Enviar notificación solo si falla el script
+      run: |
+        echo "Website monitoring script failed" | mail -s "Website Monitoring Alert" ${{ secrets.EMAIL_RECEIVER_GROUP }}
